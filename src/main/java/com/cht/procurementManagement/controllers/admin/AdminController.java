@@ -85,16 +85,41 @@ public class AdminController {
     }
 
     //update user
-    @PostMapping("/users/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @ModelAttribute UserDto userDto) throws IOException {
+//    @PostMapping("/users/{id}")
+//    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @ModelAttribute UserDto userDto) throws IOException {
+//        //validate the file input
+//        if(userDto.getRecommendationFile() != null && !userDto.getRecommendationFile().isEmpty()){
+//            if(userDto.getRecommendationFile().getSize() > 5 * 1024 * 1024){
+//                throw new IllegalArgumentException("File size should be less than 5MB");
+//            }
+//            if(!Objects.equals(userDto.getRecommendationFile().getContentType(), "application/pdf")){
+//                throw new IllegalArgumentException("Only PDF files can be uploaded");
+//            }
+//        }
+//
+//        UserDto updatedUserDto = adminService.updateUser(id, userDto);
+//        if(updatedUserDto == null){
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedUserDto);
+//    }
+
+    @PostMapping(value= "/users/{id}",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestPart("user") UserDto userDto,
+                                              @RequestPart(value = "recommendationFile", required = false) MultipartFile file) throws IOException {
         //validate the file input
-        if(userDto.getRecommendationFile() != null && !userDto.getRecommendationFile().isEmpty()){
-            if(userDto.getRecommendationFile().getSize() > 5 * 1024 * 1024){
-                throw new IllegalArgumentException("File size should be less than 5MB");
+        if(file!=null){
+            if(!file.isEmpty()) {
+                if (file.getSize() > 5 * 1024 * 1024) {
+                    throw new RuntimeException("File size should be less than 5MB");
+                }
+                if (!Objects.equals(file.getContentType(), "application/pdf")) {
+                    throw new RuntimeException("Only PDF files can be uploaded");
+                }
             }
-            if(!Objects.equals(userDto.getRecommendationFile().getContentType(), "application/pdf")){
-                throw new IllegalArgumentException("Only PDF files can be uploaded");
-            }
+
+            //update userDto with file
+            userDto.setRecommendationFile(file);
         }
 
         UserDto updatedUserDto = adminService.updateUser(id, userDto);
@@ -103,6 +128,8 @@ public class AdminController {
         }
         return ResponseEntity.ok(updatedUserDto);
     }
+
+
 
     //works for existing file
 //    @PostMapping("/users/{id}")

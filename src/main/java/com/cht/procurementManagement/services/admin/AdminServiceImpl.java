@@ -382,10 +382,14 @@ public class AdminServiceImpl implements AdminService {
         existingUser.setNic(userDto.getNic());
         existingUser.setTelephone(userDto.getTelephone());
         existingUser.setBirthdate(userDto.getBirthdate());
-        existingUser.setRecommendation(userDto.getRecommendationFile().getBytes());
-//        if(userDto.getRecommendationFile() != null && !userDto.getRecommendationFile().isEmpty()) {
-//            existingUser.setRecommendation(userDto.getRecommendationFile().getBytes());
-//        }
+//        existingUser.setRecommendation(userDto.getRecommendationFile().getBytes());
+        if(userDto.getRecommendationFile() != null){
+            if (!userDto.getRecommendationFile().isEmpty()) {
+            existingUser.setRecommendation(userDto.getRecommendationFile().getBytes());
+            }else {
+                existingUser.setRecommendation(null);
+            }
+        }
         //setting related objects
         existingUser.setDesignation(existingDesignation);
         existingUser.setSubdiv(existingSubdiv);

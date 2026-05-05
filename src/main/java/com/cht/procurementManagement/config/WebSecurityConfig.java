@@ -45,6 +45,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/notifications/**").hasAnyAuthority(
                                 UserRole.ADMIN.name(),
                                 UserRole.SUPPLIESUSER.name(),

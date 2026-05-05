@@ -35,11 +35,13 @@ public class SseEmitterRegistry {
 
         emitter.onTimeout( () -> {
             emitters.remove(userId);
+            emitter.complete();
             log.info("SSE Connection timed out for user {}", userId);
         });
 
         emitter.onError(e -> {
             emitters.remove(userId);
+            emitter.completeWithError(e);
             log.warn("SSE Connection error for user {}: {}",userId, e.getMessage());
         });
 
@@ -62,8 +64,9 @@ public class SseEmitterRegistry {
                 emitter.send(SseEmitter.event()
                         .name("notification")
                         .data(dto, MediaType.APPLICATION_JSON));
-            }catch (IOException e){
+            }catch (IOException | IllegalStateException e){
                 emitters.remove(userId);
+                emitter.complete();
                 log.warn("Failed to send SSE to user {},removed emitter", userId);
             }
         }

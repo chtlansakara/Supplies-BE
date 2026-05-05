@@ -296,7 +296,7 @@ public class AdminDivServiceImpl implements AdminDivService {
             RequestDto createdRequestDto = requestService.createRequest(requestDto);
 
             //5. save the file
-            if(!file.isEmpty()) {
+            if(file != null && !file.isEmpty()) {
                 attachmentService.uploadFile(file, "Request approval", createdRequestDto.getId(), EntityType.REQUEST);
             }
 
@@ -400,10 +400,10 @@ public class AdminDivServiceImpl implements AdminDivService {
             //i. check if a reject or approval for the request id already present from admin div - get from db
             List<CommentDto> commentsForRequest = commentRepository.findAllByRequestIdAndType(requestId, ReviewType.ADMIN_DIV)
                     .stream().map(Comment::getCommentDto).collect(Collectors.toList());
-            List<ApprovalDto> approvalsForRequst = approvalRepository.findAllByRequestIdAndType(requestId, ApprovalType.ADMIN_DIV)
+            List<ApprovalDto> approvalsForRequest = approvalRepository.findAllByRequestIdAndType(requestId, ApprovalType.ADMIN_DIV)
                     .stream().map(Approval::getApprovalDto).collect(Collectors.toList());
             //ii. check if there is any
-            if(!commentsForRequest.isEmpty() && !approvalsForRequst.isEmpty() ){
+            if(!commentsForRequest.isEmpty() && !approvalsForRequest.isEmpty() ){
                 throw new RuntimeException("Already reviewed request!");
             }
 
@@ -421,7 +421,7 @@ public class AdminDivServiceImpl implements AdminDivService {
             ApprovalDto savedApprovalDto = approvalService.createApproval(approvalDto);
 
             //8. save the file
-            if(!file.isEmpty()) {
+            if(file != null && !file.isEmpty()) {
                 attachmentService.uploadFile(file, "Approval Document", savedApprovalDto.getId(), EntityType.APPROVAL);
             }
 

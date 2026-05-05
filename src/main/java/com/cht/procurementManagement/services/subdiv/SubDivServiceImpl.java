@@ -123,7 +123,7 @@ public class SubDivServiceImpl implements SubDivService {
         RequestDto createdRequestDto = requestService.createRequest(requestDto);
 
         //5. save the file
-        if(!file.isEmpty()) {
+        if(file != null && !file.isEmpty()) {
             attachmentService.uploadFile(file, "Request approval", createdRequestDto.getId(), EntityType.REQUEST);
         }
 

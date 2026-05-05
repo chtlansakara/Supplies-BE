@@ -125,7 +125,7 @@ public class SuppliesServiceImpl implements SuppliesService {
             RequestDto createdRequestDto =  requestService.createRequest(requestDto);
 
             //4. save the file
-            if(!file.isEmpty()) {
+            if(file != null && !file.isEmpty()) {
                 attachmentService.uploadFile(file, "Request approval", createdRequestDto.getId(), EntityType.REQUEST);
             }
 
@@ -293,7 +293,7 @@ public class SuppliesServiceImpl implements SuppliesService {
         ApprovalDto savedApprovalDto =  approvalService.createApproval(approvalDto);
 
         //7. save the file
-        if(!file.isEmpty()) {
+        if(file != null && !file.isEmpty()) {
             attachmentService.uploadFile(file, "Approval Document", savedApprovalDto.getId(), EntityType.APPROVAL);
         }
 
