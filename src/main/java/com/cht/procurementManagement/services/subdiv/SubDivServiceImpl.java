@@ -270,7 +270,10 @@ public class SubDivServiceImpl implements SubDivService {
                 .map(Request::getId)
                 .collect(Collectors.toList());
         //get Procurement from request repository query
-        List<Procurement> subdivProcurement= procurementRepository.findByRequestIdIn(subdivRequestIds);
+        List<Procurement> subdivProcurement= procurementRepository.findByRequestIdIn(subdivRequestIds)
+                .stream()
+                .sorted(Comparator.comparing(Procurement::getId).reversed())
+                .collect(Collectors.toList());;
 
         return procurementMapper.toResponseDtoList(subdivProcurement);
     }

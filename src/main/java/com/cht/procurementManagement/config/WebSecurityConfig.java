@@ -2,6 +2,7 @@ package com.cht.procurementManagement.config;
 
 import com.cht.procurementManagement.enums.UserRole;
 import com.cht.procurementManagement.services.jwt.UserService;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +47,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/notifications/stream").permitAll()
                         .requestMatchers("/api/notifications/**").hasAnyAuthority(
                                 UserRole.ADMIN.name(),
                                 UserRole.SUPPLIESUSER.name(),
@@ -56,6 +58,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/admindiv/**").hasAnyAuthority(UserRole.ADMINDIVUSER.name())
                         .requestMatchers("/api/supplies/**").hasAnyAuthority(UserRole.SUPPLIESUSER.name())
                         .requestMatchers("/api/subdiv/**").hasAnyAuthority(UserRole.SUBDIVUSER.name())
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

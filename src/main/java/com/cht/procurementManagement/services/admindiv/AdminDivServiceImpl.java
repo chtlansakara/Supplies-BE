@@ -464,7 +464,10 @@ public class AdminDivServiceImpl implements AdminDivService {
                 .collect(Collectors.toList());
 
         //get Procurement from request repository query
-        List<Procurement> admindivProcurement=procurementRepository.findByRequestIdIn(admindivRequestIds);
+        List<Procurement> admindivProcurement=procurementRepository.findByRequestIdIn(admindivRequestIds)
+                .stream()
+                .sorted(Comparator.comparing(Procurement::getId).reversed())
+                .collect(Collectors.toList());;
 
         return procurementMapper.toResponseDtoList(admindivProcurement);
     }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
-
+import org.springframework.security.core.Authentication;
 @RestController
 @RequestMapping("/api/notifications")
 public class NotificationController {
@@ -26,10 +26,16 @@ public class NotificationController {
 
     //SSE Stream endpoint for Angular to connect on login
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter stream(@AuthenticationPrincipal UserDetails userDetails){
-        User user =(User)  userDetails;
+    public SseEmitter stream(Authentication authentication){
+        User user =(User) authentication.getPrincipal();
         return sseEmitterRegistry.register(user.getId());
     }
+
+//    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+//    public SseEmitter stream(@AuthenticationPrincipal UserDetails userDetails){
+//        User user =(User)  userDetails;
+//        return sseEmitterRegistry.register(user.getId());
+//    }
 
     //get existing notifications when the page load
     @GetMapping

@@ -213,7 +213,10 @@ public class ProcurementServiceImpl implements ProcurementService{
     //get procurement list
     @Override
     public List<ProcurementResponseDto> getProcurement() {
-         List<Procurement> procurements = procurementRepository.findAll();
+         List<Procurement> procurements = procurementRepository.findAll()
+                 .stream()
+                 .sorted(Comparator.comparing(Procurement::getId).reversed())
+                 .collect(Collectors.toList());
          return procurementMapper.toResponseDtoList(procurements);
     }
 
