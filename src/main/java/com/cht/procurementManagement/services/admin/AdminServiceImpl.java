@@ -296,9 +296,9 @@ public class AdminServiceImpl implements AdminService {
             user.setPassword( new BCryptPasswordEncoder().encode(userDto.getNic()));
             user.setTelephone(userDto.getTelephone());
             user.setBirthdate(userDto.getBirthdate());
-
+            if(userDto.getRecommendationFile() != null) {
                 user.setRecommendation(userDto.getRecommendationFile().getBytes());
-
+            }
             //setting objects
             user.setDesignation(existingDesignation);
             user.setAdmindiv(existingAdmindiv);

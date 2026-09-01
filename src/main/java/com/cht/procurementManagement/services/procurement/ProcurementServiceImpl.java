@@ -588,6 +588,7 @@ public class ProcurementServiceImpl implements ProcurementService{
         notificationService.deleteNotifications(AuditEntityType.PROCUREMENT, id);
 
         //delete related procurement attachments
+
         attachmentService.deleteAllAttachmentsOfAnEntity(id, EntityType.PROCUREMENT);
 
         //delete procurement

@@ -1,0 +1,737 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ProcurementServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.cht.procurementManagement.services.procurement</a>
+</div>
+
+<h1>Coverage Summary for Class: ProcurementServiceImpl (com.cht.procurementManagement.services.procurement)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProcurementServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44.4%
+  </span>
+  <span class="absValue">
+    (8/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82.4%
+  </span>
+  <span class="absValue">
+    (187/227)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.cht.procurementManagement.services.procurement;
+&nbsp;
+&nbsp;import com.cht.procurementManagement.dto.*;
+&nbsp;import com.cht.procurementManagement.dto.procurement.ProcurementCreateDto;
+&nbsp;import com.cht.procurementManagement.dto.procurement.ProcurementResponseDto;
+&nbsp;import com.cht.procurementManagement.dto.procurement.ProcurementStatusUpdateDto;
+&nbsp;import com.cht.procurementManagement.entities.*;
+&nbsp;import com.cht.procurementManagement.enums.*;
+&nbsp;import com.cht.procurementManagement.mappers.ProcurementMapper;
+&nbsp;import com.cht.procurementManagement.repositories.*;
+&nbsp;import com.cht.procurementManagement.services.auth.AuthService;
+&nbsp;import com.cht.procurementManagement.services.notification.NotificationService;
+&nbsp;import com.cht.procurementManagement.utils.AuditService;
+&nbsp;import jakarta.persistence.EntityNotFoundException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;@Service
+&nbsp;public class ProcurementServiceImpl implements ProcurementService{
+&nbsp;    private final ProcurementMapper procurementMapper;
+&nbsp;    private final UserRepository userRepository;
+&nbsp;    private final ProcurementStatusRepository procurementStatusRepository;
+&nbsp;    private final VendorRepository vendorRepository;
+&nbsp;    private final RequestRepository requestRepository;
+&nbsp;    private final AuthService authService;
+&nbsp;    private final ProcurementRepository procurementRepository;
+&nbsp;    private final AuditService auditService;
+&nbsp;
+&nbsp;    private final ProcurementStatusUpdateRepository procurementStatusUpdateRepository;
+&nbsp;    private final ProcurementSourceRepository procurementSourceRepository;
+&nbsp;    private final NotificationService notificationService;
+&nbsp;
+&nbsp;
+&nbsp;    public ProcurementServiceImpl(ProcurementMapper procurementMapper,
+&nbsp;                                  UserRepository userRepository,
+&nbsp;                                  ProcurementStatusRepository procurementStatusRepository,
+&nbsp;                                  VendorRepository vendorRepository,
+&nbsp;                                  RequestRepository requestRepository,
+&nbsp;                                  AuthService authService,
+&nbsp;                                  ProcurementRepository procurementRepository,
+&nbsp;                                  AuditService auditService,
+&nbsp;                                  ProcurementStatusUpdateRepository procurementStatusUpdateRepository,
+<b class="fc">&nbsp;                                  ProcurementSourceRepository procurementSourceRepository, NotificationService notificationService) {</b>
+<b class="fc">&nbsp;        this.procurementMapper = procurementMapper;</b>
+<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+<b class="fc">&nbsp;        this.procurementStatusRepository = procurementStatusRepository;</b>
+<b class="fc">&nbsp;        this.vendorRepository = vendorRepository;</b>
+<b class="fc">&nbsp;        this.requestRepository = requestRepository;</b>
+<b class="fc">&nbsp;        this.authService = authService;</b>
+<b class="fc">&nbsp;        this.procurementRepository = procurementRepository;</b>
+<b class="fc">&nbsp;        this.auditService = auditService;</b>
+<b class="fc">&nbsp;        this.procurementStatusUpdateRepository = procurementStatusUpdateRepository;</b>
+<b class="fc">&nbsp;        this.procurementSourceRepository = procurementSourceRepository;</b>
+<b class="fc">&nbsp;        this.notificationService = notificationService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;UserDto&gt; getAssignedToUsersList() {
+&nbsp;        //only users of supplies division must be in the list
+<b class="nc">&nbsp;        return userRepository.findAll()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .filter(user-&gt; user.getUserRole() == UserRole.SUPPLIESUSER)</b>
+<b class="nc">&nbsp;                .sorted(Comparator.comparing(User::getEmail))</b>
+<b class="nc">&nbsp;                .map(User::getUserDto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;VendorDto&gt; getVendorsList() {
+<b class="nc">&nbsp;        return vendorRepository.findAll()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .sorted(Comparator.comparing(Vendor::getName))</b>
+<b class="nc">&nbsp;                .map(Vendor::getVendorDto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ProcurementStatusDto&gt; getProcurementStatusList() {
+&nbsp;        //not sending the first status when updating the status
+<b class="nc">&nbsp;        return procurementStatusRepository.findAll()</b>
+<b class="nc">&nbsp;                .stream()</b>
+&nbsp;//                .filter(status-&gt; status.getId() != 2)
+<b class="nc">&nbsp;                .sorted(Comparator.comparing(ProcurementStatus::getName))</b>
+<b class="nc">&nbsp;                .map(ProcurementStatus::getProcurementStatusDto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;String&gt; getProcurmentStagesList() {
+<b class="nc">&nbsp;        return Arrays.stream(ProcurementStage.values()).map(Enum::name).collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ProcurementSourceDto&gt; getProcurementSources(){
+<b class="nc">&nbsp;        return procurementSourceRepository.findAll()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .sorted(Comparator.comparing(ProcurementSource::getName))</b>
+<b class="nc">&nbsp;                .map(ProcurementSource::getdto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;//Procurement CRUD:
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public ProcurementResponseDto createProcurement(ProcurementCreateDto createDto) {
+&nbsp;        //1. create procurement from dto -using mapper method
+<b class="fc">&nbsp;        Procurement procurement = procurementMapper.dtoToProcurement(createDto);</b>
+&nbsp;
+&nbsp;        //2. find objects from ids in dto
+&nbsp;            //i. fetch assignedTo User- User
+&nbsp;
+<b class="fc">&nbsp;            User assignedTo = userRepository.findById(createDto.getAssignedToUserId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Assigned user not found&quot;));</b>
+&nbsp;            //check if the user is a supplies user
+<b class="fc">&nbsp;            if(!assignedTo.getUserRole().equals(UserRole.SUPPLIESUSER)){</b>
+<b class="fc">&nbsp;                throw new RuntimeException(&quot;Assigned user must be a supplies user&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            //set
+<b class="fc">&nbsp;            procurement.setAssignedTo(assignedTo);</b>
+&nbsp;
+&nbsp;            //ii. fetch Vendor- Vendor
+<b class="fc">&nbsp;        if(createDto.getVendorId() != null){</b>
+<b class="fc">&nbsp;            Vendor vendor = vendorRepository.findById(createDto.getVendorId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(()-&gt; new EntityNotFoundException(&quot;Vendor not found&quot;));</b>
+&nbsp;            //set
+<b class="fc">&nbsp;            procurement.setVendor(vendor);</b>
+&nbsp;        }
+&nbsp;        //check for source
+<b class="fc">&nbsp;        ProcurementSource procurementSource = procurementSourceRepository.findById(createDto.getSourceId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Source not found&quot;));</b>
+&nbsp;
+&nbsp;        //set source
+<b class="fc">&nbsp;        procurement.setSource(procurementSource);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;            //iii. assign Requests - List-Request
+&nbsp;        //find if sent request list is empty
+<b class="fc">&nbsp;        if(createDto.getRequestId() == null ) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Request is empty&quot;);</b>
+&nbsp;        }
+&nbsp;        //validate request ids - using class method
+<b class="fc">&nbsp;        Request validatedRequest= validateAsValidRequest(createDto.getRequestId(),true);</b>
+&nbsp;        //set
+<b class="fc">&nbsp;        procurement.setRequest(validatedRequest);</b>
+&nbsp;
+&nbsp;
+&nbsp;        //3.find and assign other backend objects
+&nbsp;            //i. set procurement stage
+<b class="fc">&nbsp;        procurement.setProcurementStage(ProcurementStage.PROCUREMENT_PROCESS_NOT_COMMENCED);</b>
+&nbsp;
+&nbsp;            //ii. assign createdBy -User
+<b class="fc">&nbsp;        User loggedUser = getLoggedUser();</b>
+&nbsp;            //set
+<b class="fc">&nbsp;        procurement.setCreatedBy(loggedUser);</b>
+&nbsp;
+<b class="fc">&nbsp;        procurement.setLastUpdatedBy(loggedUser);</b>
+&nbsp;
+&nbsp;            //iii. assign createdOn - Date
+<b class="fc">&nbsp;        procurement.setCreatedOn(new Date());</b>
+&nbsp;
+&nbsp;        //6.save Procurement to db
+<b class="fc">&nbsp;        Procurement savedProcurement = procurementRepository.save(procurement);</b>
+&nbsp;
+&nbsp;
+&nbsp;        //7. change requests status
+<b class="fc">&nbsp;        validatedRequest.setStatus(RequestStatus.PROCUREMENT_CREATED);</b>
+<b class="fc">&nbsp;        requestRepository.save(validatedRequest);</b>
+&nbsp;
+&nbsp;        //8. Add to audit log
+<b class="fc">&nbsp;        auditService.log(</b>
+<b class="fc">&nbsp;                loggedUser.getEmail(),</b>
+<b class="fc">&nbsp;                loggedUser.getEmployeeId(),</b>
+&nbsp;                AuditAction.CREATED,
+&nbsp;                AuditEntityType.PROCUREMENT,
+<b class="fc">&nbsp;                savedProcurement.getId(),</b>
+<b class="fc">&nbsp;                &quot;Created procurement with id: &quot;+ savedProcurement.getId() +&quot; including request ids: &quot;</b>
+<b class="fc">&nbsp;                        +createDto.getRequestId()+</b>
+<b class="fc">&nbsp;                        &quot; and vendor id: &quot;+createDto.getVendorId()+</b>
+<b class="fc">&nbsp;                        &quot; and name of procurement: &quot; + createDto.getName()</b>
+&nbsp;        );
+&nbsp;
+&nbsp;        //send notifications
+<b class="fc">&nbsp;        notificationService.onProcurementCreation(savedProcurement, validatedRequest);</b>
+&nbsp;
+&nbsp;        //7.return as dto
+<b class="fc">&nbsp;        return procurementMapper.toResponseDto(savedProcurement);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //get procurement list
+&nbsp;    @Override
+&nbsp;    public List&lt;ProcurementResponseDto&gt; getProcurement() {
+<b class="nc">&nbsp;         List&lt;Procurement&gt; procurements = procurementRepository.findAll();</b>
+<b class="nc">&nbsp;         return procurementMapper.toResponseDtoList(procurements);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProcurementResponseDto getProcurementById(Long id) {
+<b class="nc">&nbsp;        Procurement procurement = procurementRepository.findById(id)</b>
+<b class="nc">&nbsp;                .orElseThrow(()-&gt; new RuntimeException(&quot;Procurement not found&quot;));</b>
+<b class="nc">&nbsp;        return procurementMapper.toResponseDto(procurement);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public ProcurementResponseDto updateProcurement(Long id, ProcurementCreateDto createDto) {
+&nbsp;        //find the procurement - using class method
+<b class="fc">&nbsp;        Procurement existingProcurement = validateToUpdateDeleteProcurement(id);</b>
+&nbsp;
+&nbsp;        //finding existing vendor name &amp; id (for audit log)
+<b class="fc">&nbsp;        Vendor oldVendor = existingProcurement.getVendor();</b>
+<b class="fc">&nbsp;        String oldVendorName = oldVendor.getName();</b>
+<b class="fc">&nbsp;        Long oldVendorId = oldVendor.getId();</b>
+&nbsp;
+&nbsp;        //finding existing request id
+<b class="fc">&nbsp;        Long oldRequestId = existingProcurement.getRequest().getId();</b>
+&nbsp;
+&nbsp;        //5. find other objects from ids in dto
+&nbsp;        //i. fetch new assignedTo - User
+<b class="fc">&nbsp;        if(createDto.getAssignedToUserId()!= null) {</b>
+<b class="fc">&nbsp;            User assignedTo = userRepository.findById(createDto.getAssignedToUserId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Assigned User not found&quot;));</b>
+&nbsp;            //check if the user is a supplies user
+<b class="fc">&nbsp;            if (!assignedTo.getUserRole().equals(UserRole.SUPPLIESUSER)) {</b>
+<b class="fc">&nbsp;                throw new RuntimeException(&quot;Assigned user must be a supplies user&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            //set
+<b class="fc">&nbsp;            existingProcurement.setAssignedTo(assignedTo);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //ii. fetch Vendor- Vendor
+<b class="fc">&nbsp;        if(createDto.getVendorId() != null){</b>
+<b class="fc">&nbsp;            Vendor vendor = vendorRepository.findById(createDto.getVendorId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(()-&gt; new EntityNotFoundException(&quot;Vendor not found&quot;));</b>
+&nbsp;            //set
+<b class="fc">&nbsp;            existingProcurement.setVendor(vendor);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //check for source
+<b class="fc">&nbsp;        if(createDto.getSourceId()!= null &amp;&amp; !createDto.getSourceId().equals(existingProcurement.getSource().getId())) {</b>
+<b class="fc">&nbsp;            ProcurementSource procurementSource = procurementSourceRepository.findById(createDto.getSourceId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Source not found&quot;));</b>
+&nbsp;
+&nbsp;            //set source
+<b class="fc">&nbsp;            existingProcurement.setSource(procurementSource);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //iii. assign Request
+&nbsp;        //find if sent request is null
+<b class="fc">&nbsp;        if(createDto.getRequestId() == null ) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Request is empty&quot;);</b>
+&nbsp;        }
+&nbsp;        //validate request ids - using class method
+<b class="fc">&nbsp;        Request requestNew= validateAsValidRequest(createDto.getRequestId(),false);</b>
+&nbsp;
+&nbsp;        //if requests in the list has &#39;procurement created&#39; then it should be equal to the one already in the procurement
+&nbsp;        //i. get already procurement request list
+<b class="fc">&nbsp;        Request requestOld =  existingProcurement.getRequest();</b>
+<b class="fc">&nbsp;        if(requestNew.getStatus().equals(RequestStatus.PROCUREMENT_CREATED)){</b>
+<b class="fc">&nbsp;            if(!requestNew.getId().equals(oldRequestId)){</b>
+<b class="fc">&nbsp;                throw new RuntimeException(&quot;Can not select requests in other procurement&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;//        for(Request request: requestsNew){
+&nbsp;//            if(request.getStatus().equals(RequestStatus.PROCUREMENT_CREATED)){
+&nbsp;//                if(!requestsOld.contains(request)){
+&nbsp;//                    throw new RuntimeException(&quot;Can not select requests in other procurement&quot;);
+&nbsp;//                }
+&nbsp;//            }
+&nbsp;//        }
+&nbsp;        //set
+<b class="fc">&nbsp;        existingProcurement.setRequest(requestNew);</b>
+&nbsp;
+&nbsp;        //4. update with details
+<b class="fc">&nbsp;        procurementMapper.updateProcurementWithDto(existingProcurement,createDto);</b>
+&nbsp;
+&nbsp;
+&nbsp;        //5. set updated details
+<b class="fc">&nbsp;        Long loggedUserId = authService.getLoggedUserDto().getId();</b>
+<b class="fc">&nbsp;        User updatedBy = userRepository.findById(loggedUserId)</b>
+<b class="fc">&nbsp;                .orElseThrow(()-&gt; new EntityNotFoundException(&quot;Current user not found&quot;));</b>
+<b class="fc">&nbsp;        existingProcurement.setLastUpdatedBy(updatedBy);</b>
+<b class="fc">&nbsp;        existingProcurement.setLastUpdatedOn(new Date());</b>
+&nbsp;
+&nbsp;        //6. save to db
+<b class="fc">&nbsp;        Procurement updatedProcurement = procurementRepository.save(existingProcurement);</b>
+&nbsp;        //save request status
+<b class="fc">&nbsp;        if(!requestNew.getId().equals(oldRequestId)){</b>
+<b class="fc">&nbsp;            requestNew.setStatus(RequestStatus.PROCUREMENT_CREATED);</b>
+<b class="fc">&nbsp;            requestOld.setStatus(RequestStatus.PENDING_PROCUREMENT);</b>
+&nbsp;            //save to db
+<b class="fc">&nbsp;            requestRepository.save(requestNew);</b>
+<b class="fc">&nbsp;            requestRepository.save(requestOld);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //save requests with procurement number
+&nbsp;//        for(Request request : requestsNew){
+&nbsp;//            request.setStatus(RequestStatus.PROCUREMENT_CREATED);
+&nbsp;//            request.setProcurement(updatedProcurement);
+&nbsp;//        }
+&nbsp;        //remove procurement and status from the removed requests of existing list
+&nbsp;        //find removed request list
+&nbsp;//        List&lt;Request&gt; removedRequests = new ArrayList&lt;&gt;();
+&nbsp;//        for(Request request: requestsOld){
+&nbsp;//            if(!requestsNew.contains(request)){
+&nbsp;//                removedRequests.add(request);
+&nbsp;//            }
+&nbsp;//        }
+&nbsp;        //change its request status and remove procurement
+&nbsp;//        if(!removedRequests.isEmpty()) {
+&nbsp;//            for (Request request : removedRequests){
+&nbsp;//                request.setStatus(RequestStatus.PENDING_PROCUREMENT);
+&nbsp;//                request.setProcurement(null);
+&nbsp;//            }
+&nbsp;//            //save to db
+&nbsp;//            requestRepository.saveAll(removedRequests);
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        requestRepository.saveAll(requestsNew);
+&nbsp;
+&nbsp;        //7.create audit log
+<b class="fc">&nbsp;        auditService.log(</b>
+<b class="fc">&nbsp;                updatedBy.getEmail(),</b>
+<b class="fc">&nbsp;                updatedBy.getEmployeeId(),</b>
+&nbsp;                AuditAction.UPDATED,
+&nbsp;                AuditEntityType.PROCUREMENT,
+<b class="fc">&nbsp;                updatedProcurement.getId(),</b>
+&nbsp;                &quot;Updated procurement with id:&quot; +id + &quot; included request ids: &quot;+
+&nbsp;                        oldRequestId + &quot; and vendor id: &quot; + oldVendorId + &quot; and name: &quot;+ oldVendorName +
+<b class="fc">&nbsp;                        &quot; updated to include request ids: &quot; +createDto.getRequestId()+</b>
+<b class="fc">&nbsp;                        &quot; and vendor id: &quot;+createDto.getVendorId()</b>
+&nbsp;
+&nbsp;        );
+&nbsp;
+&nbsp;        //8.return as response dto
+<b class="fc">&nbsp;        return procurementMapper.toResponseDto(updatedProcurement);</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    //for update form - we need request list with either approved or in procurement
+&nbsp;    @Transactional
+&nbsp;    @Override
+&nbsp;    public List&lt;RequestDto&gt; getRequestsForUpdateProcurement() {
+<b class="nc">&nbsp;        return requestRepository.findAll()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .filter(request -&gt;</b>
+<b class="nc">&nbsp;                request.getStatus().equals(RequestStatus.PROCUREMENT_CREATED)</b>
+<b class="nc">&nbsp;                        || request.getStatus().equals(RequestStatus.PENDING_PROCUREMENT))</b>
+<b class="nc">&nbsp;                .sorted(Comparator.comparing(Request::getId).reversed())</b>
+<b class="nc">&nbsp;                .map(Request::getRequestDto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    //on status update - create new object &#39;ProcurementStatusUpdate&#39; &amp; change status in &#39;Procurement&#39;
+&nbsp;    @Transactional
+&nbsp;    @Override
+&nbsp;    public ProcurementStatusUpdateDto updateStatus(Long procurementId, ProcurementStatusUpdateDto statusUpdateDto) {
+<b class="fc">&nbsp;        ProcurementStatus newStatus = null;</b>
+&nbsp;
+&nbsp;        //1. find procurement to update
+<b class="fc">&nbsp;        Procurement existingProcurement = procurementRepository.findById(procurementId)</b>
+<b class="fc">&nbsp;                .orElseThrow(()-&gt; new EntityNotFoundException(&quot;Procurement not found&quot;));</b>
+&nbsp;
+&nbsp;        //2. to update the assigned user can not be null
+<b class="fc">&nbsp;        if(existingProcurement.getAssignedTo() == null){</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;To update status procurement should have an assigned employee&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //3. Check if the user logged is allowed to update status
+&nbsp;        //should be the one  assigned
+<b class="fc">&nbsp;        Long loggedUserId = authService.getLoggedUserDto().getId();</b>
+&nbsp;        //since assigned user could be null
+<b class="fc">&nbsp;        Long assignedUserId = existingProcurement.getAssignedTo().getId();</b>
+<b class="fc">&nbsp;        if(!loggedUserId.equals(assignedUserId)){</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;The procurement is not allowed to be updated by this user!&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //extra - check if procurement is already completed
+<b class="fc">&nbsp;        if(existingProcurement.getCompletedDate() != null){</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Can not update status as the procurement is already completed.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //4. find the status
+&nbsp;        //find stage selected
+<b class="fc">&nbsp;        if(statusUpdateDto.getProcurementStage() == null){</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;The stage should be selected&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //save previous values for audit log before updating (for audit log)
+<b class="fc">&nbsp;        String previousStage = existingProcurement.getProcurementStage().toString();</b>
+&nbsp;
+&nbsp;    //taking care of status added
+<b class="fc">&nbsp;        if(statusUpdateDto.getProcurementStatusId() != null) {</b>
+&nbsp;            //if existing stage and status is selected again
+<b class="fc">&nbsp;            if(existingProcurement.getStatus() != null &amp;&amp; existingProcurement.getStatus().getId().equals(statusUpdateDto.getProcurementStatusId())) {</b>
+<b class="fc">&nbsp;                throw new RuntimeException(&quot;Can not select the same status.&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            ProcurementStatus changedStatus = procurementStatusRepository.findById(statusUpdateDto.getProcurementStatusId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Status selected not found&quot;));</b>
+&nbsp;            //change
+<b class="fc">&nbsp;            existingProcurement.setStatus(changedStatus);</b>
+&nbsp;            //save to method variable
+<b class="fc">&nbsp;            newStatus = changedStatus;</b>
+<b class="fc">&nbsp;        }else{</b>
+&nbsp;            //remove status if not added to update-status
+<b class="fc">&nbsp;            existingProcurement.setStatus(null);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //extra - check if the stage changed to completed - add completed date to procurement
+<b class="fc">&nbsp;        boolean isCompletedStage = statusUpdateDto.getProcurementStage().equals(ProcurementStage.PAID_AND_COMPLETED.toString());</b>
+&nbsp;        //set completed date of procurement if it is
+<b class="fc">&nbsp;        if(isCompletedStage){</b>
+<b class="fc">&nbsp;            Date completedDate = statusUpdateDto.getStatusChangedOn() != null ?</b>
+<b class="fc">&nbsp;                    statusUpdateDto.getStatusChangedOn() : new Date();</b>
+<b class="fc">&nbsp;            existingProcurement.setCompletedDate(completedDate);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //extra - check if status is changed to commenced - add commenced date to procurement
+<b class="fc">&nbsp;        boolean isCommencedStage = statusUpdateDto.getProcurementStage().equals(ProcurementStage.PURCHASE_PROCESS_COMMENCED.toString());</b>
+&nbsp;        //set completed date of procurement if it is
+<b class="fc">&nbsp;        if(isCommencedStage){</b>
+<b class="fc">&nbsp;            Date commencedDate = statusUpdateDto.getStatusChangedOn() != null ?</b>
+<b class="fc">&nbsp;                    statusUpdateDto.getStatusChangedOn() : new Date();</b>
+<b class="fc">&nbsp;            existingProcurement.setCommencedDate(commencedDate);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //5. find the updating user
+<b class="fc">&nbsp;        User updatedBy = userRepository.findById(loggedUserId)</b>
+<b class="fc">&nbsp;                .orElseThrow(()-&gt; new EntityNotFoundException(&quot;Logged user not found&quot;));</b>
+&nbsp;
+&nbsp;        //5.update the stage of procurement
+<b class="fc">&nbsp;       existingProcurement.setProcurementStage(ProcurementStage.valueOf(statusUpdateDto.getProcurementStage()));</b>
+&nbsp;
+&nbsp;        //6. create new statusUpdate object
+<b class="fc">&nbsp;        ProcurementStatusUpdate statusUpdate= new ProcurementStatusUpdate();</b>
+<b class="fc">&nbsp;        statusUpdate.setComment(statusUpdateDto.getComment());</b>
+&nbsp;        //if date is given, set or set current date
+<b class="fc">&nbsp;        if(statusUpdateDto.getStatusChangedOn()== null){</b>
+<b class="fc">&nbsp;            statusUpdate.setStatusChangedOn(new Date());</b>
+&nbsp;        }else{
+<b class="fc">&nbsp;            statusUpdate.setStatusChangedOn(statusUpdateDto.getStatusChangedOn());</b>
+&nbsp;        }
+&nbsp;        //set createdOn
+<b class="fc">&nbsp;        statusUpdate.setCreatedOn(new Date());</b>
+&nbsp;        //if status is given
+<b class="fc">&nbsp;        if(newStatus != null) {</b>
+<b class="fc">&nbsp;            statusUpdate.setStatus(newStatus);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        statusUpdate.setProcurementStage(ProcurementStage.valueOf(statusUpdateDto.getProcurementStage()));</b>
+<b class="fc">&nbsp;        statusUpdate.setProcurement(existingProcurement);</b>
+<b class="fc">&nbsp;        statusUpdate.setCreatedBy(updatedBy);</b>
+&nbsp;
+&nbsp;        //set updated details in procurement
+&nbsp;//        existingProcurement.setLastUpdatedOn(new Date());
+&nbsp;//        existingProcurement.setLastUpdatedBy(updatedBy);
+&nbsp;
+&nbsp;        //7. save both to db
+<b class="fc">&nbsp;        Procurement savedProcurement = procurementRepository.save(existingProcurement);</b>
+<b class="fc">&nbsp;        ProcurementStatusUpdate savedStatusUpdate = procurementStatusUpdateRepository.save(statusUpdate);</b>
+&nbsp;
+&nbsp;        //send notifications
+<b class="fc">&nbsp;        notificationService.onProcurementStatusChanged(savedProcurement);</b>
+&nbsp;
+&nbsp;        //7. add to audit log
+<b class="fc">&nbsp;        auditService.log(</b>
+<b class="fc">&nbsp;                updatedBy.getEmail(),</b>
+<b class="fc">&nbsp;                updatedBy.getEmployeeId(),</b>
+&nbsp;                AuditAction.STATUS_CHANGED,
+&nbsp;                AuditEntityType.PROCUREMENT,
+<b class="fc">&nbsp;                savedProcurement.getId(),</b>
+&nbsp;                &quot;Status of procurement &quot; +procurementId + &quot; updated  from stage: &quot;+
+<b class="fc">&nbsp;                       previousStage + &quot; to stage: &quot; + savedStatusUpdate.getProcurementStage().toString() +</b>
+&nbsp;                       &quot; with comments &#39;&quot;+
+<b class="fc">&nbsp;                        statusUpdateDto.getComment() + &quot;&#39;.&quot;</b>
+&nbsp;
+&nbsp;        );
+&nbsp;
+&nbsp;        //8.return as response dto
+<b class="fc">&nbsp;        return savedStatusUpdate.getDto();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ProcurementStatusUpdateDto&gt; getStatusUpdatesByProcurementId(Long procurementId) {
+<b class="nc">&nbsp;        return procurementStatusUpdateRepository.findAllByProcurementId(procurementId)</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .sorted(Comparator.comparing(ProcurementStatusUpdate::getCreatedOn).reversed())</b>
+<b class="nc">&nbsp;                .map(ProcurementStatusUpdate::getDto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public void deleteProcurement(Long id) {
+<b class="fc">&nbsp;        Procurement existingProcurement = validateToUpdateDeleteProcurement(id);</b>
+&nbsp;        // to create audit log
+<b class="fc">&nbsp;        User updatedBy = getLoggedUser();</b>
+&nbsp;        //update related request
+<b class="fc">&nbsp;        Request request = requestRepository.findById(existingProcurement.getRequest().getId())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Related request not found&quot;));</b>
+&nbsp;        //change status of request
+<b class="fc">&nbsp;        request.setStatus(RequestStatus.PENDING_PROCUREMENT);</b>
+&nbsp;        //save to db
+<b class="fc">&nbsp;        requestRepository.save(request);</b>
+&nbsp;
+&nbsp;
+&nbsp;        //find request objects
+&nbsp;//        List&lt;Long&gt; requestIds = requests.stream().map(Request::getId).collect(Collectors.toList());
+&nbsp;//        List&lt;Request&gt; existingRequests = requestRepository.findAllById(requestIds);
+&nbsp;//        //update status of requests
+&nbsp;//        for(Request request : existingRequests){
+&nbsp;//            request.setStatus(RequestStatus.PENDING_PROCUREMENT);
+&nbsp;//            request.setProcurement(null);
+&nbsp;//        }
+&nbsp;//        //save requests in db
+&nbsp;//        requestRepository.saveAll(existingRequests);
+&nbsp;
+&nbsp;
+&nbsp;        //delete related notifications
+<b class="fc">&nbsp;        notificationService.deleteNotifications(AuditEntityType.PROCUREMENT, id);</b>
+&nbsp;
+&nbsp;        //delete procurement
+<b class="fc">&nbsp;        procurementRepository.deleteById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        auditService.log(</b>
+<b class="fc">&nbsp;                updatedBy.getEmail(),</b>
+<b class="fc">&nbsp;                updatedBy.getEmployeeId(),</b>
+&nbsp;                AuditAction.DELETED,
+&nbsp;                AuditEntityType.PROCUREMENT,
+&nbsp;                id,
+&nbsp;                &quot;Deleted procurement including request id: &quot;
+<b class="fc">&nbsp;                        + request.getId()+</b>
+<b class="fc">&nbsp;                        &quot; ,and title: &quot;+existingProcurement.getName()</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;//class methods
+&nbsp;
+&nbsp;    private Procurement validateToUpdateDeleteProcurement(Long id){
+&nbsp;        //1. find procurement to update
+<b class="fc">&nbsp;        Procurement existingProcurement = procurementRepository.findById(id)</b>
+<b class="fc">&nbsp;                .orElseThrow(()-&gt; new EntityNotFoundException(&quot;Procurement not found&quot;));</b>
+&nbsp;
+&nbsp;        //2.check for correct stage (not completed)
+<b class="fc">&nbsp;        ProcurementStage stage = existingProcurement.getProcurementStage();</b>
+<b class="fc">&nbsp;        if(stage.equals(ProcurementStage.PAID_AND_COMPLETED)) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;This procurement can not be updated/deleted&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //3. Check if the user logged is allowed to update/delete
+&nbsp;        //should be the one created procurement or assigned
+<b class="fc">&nbsp;        Long loggedUserId = authService.getLoggedUserDto().getId();</b>
+&nbsp;        //since assigned user could be null
+<b class="fc">&nbsp;        Long assignedUserId = existingProcurement.getAssignedTo()!= null ? existingProcurement.getAssignedTo().getId() : null;</b>
+<b class="fc">&nbsp;        Long createdUserId = existingProcurement.getCreatedBy().getId();</b>
+<b class="fc">&nbsp;        if(!loggedUserId.equals(assignedUserId) &amp;&amp; !loggedUserId.equals(createdUserId)){</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;The procurement is not allowed to be updated by this user!&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return existingProcurement;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private Request validateAsValidRequest(Long requestId, boolean isCreate){
+&nbsp;        //find request object
+<b class="fc">&nbsp;        Request request = requestRepository.findById(requestId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Request selected is not found&quot;));</b>
+&nbsp;
+&nbsp;//        if(requests.size() != requestIds.size()){
+&nbsp;//            throw new RuntimeException(&quot;Some requests are not found&quot;);
+&nbsp;//        }
+&nbsp;
+<b class="fc">&nbsp;        if(isCreate) {</b>
+<b class="fc">&nbsp;            if(!request.getStatus().equals(RequestStatus.PENDING_PROCUREMENT)){</b>
+<b class="fc">&nbsp;                throw new RuntimeException(&quot;Request is not ready for procurement&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            //check for correct status of each request - should be pe
+&nbsp;//            requests.stream()
+&nbsp;//                    .filter(request -&gt; !request.getStatus().equals(RequestStatus.PENDING_PROCUREMENT))
+&nbsp;//                    .findFirst()
+&nbsp;//                    .ifPresent(invalidRequest -&gt; {
+&nbsp;//                        throw new RuntimeException(&quot;Some requests are not ready for procurement&quot;);
+&nbsp;//                    });
+&nbsp;        }else{
+<b class="fc">&nbsp;            if(!request.getStatus().equals(RequestStatus.PENDING_PROCUREMENT) &amp;&amp;</b>
+<b class="fc">&nbsp;            !(request.getStatus().equals(RequestStatus.PROCUREMENT_CREATED))){</b>
+<b class="fc">&nbsp;                throw new RuntimeException(&quot;Request can not be added for procurement&quot;);</b>
+&nbsp;            }
+&nbsp;            //check for 2 correct status of each request - the one already have should be allowed -
+&nbsp;//            requests.stream()
+&nbsp;//                    .filter(request -&gt;
+&nbsp;//                            !request.getStatus().equals(RequestStatus.PROCUREMENT_CREATED)
+&nbsp;//                            &amp;&amp; !request.getStatus().equals(RequestStatus.PENDING_PROCUREMENT))
+&nbsp;//                    .findFirst()
+&nbsp;//                    .ifPresent(invalidRequest -&gt; {
+&nbsp;//                        throw new RuntimeException(&quot;Some requests can not be added for a procurement.&quot;);
+&nbsp;//                    });
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return request;</b>
+&nbsp;
+&nbsp;
+&nbsp;//        //count ids sent
+&nbsp;//        Long uniqueInputCount = requestIds.stream().distinct().count();
+&nbsp;//        //count from db
+&nbsp;//        Long dbCount = requestRepository.countByIdIn(requestIds);
+&nbsp;//        //compare to find if its same
+&nbsp;//        return uniqueInputCount  == dbCount;
+&nbsp;}
+&nbsp;
+&nbsp;private User getLoggedUser(){
+<b class="fc">&nbsp;        Long loggedUserId = authService.getLoggedUserDto().getId();</b>
+&nbsp;        //find in db
+<b class="fc">&nbsp;    User loggedUser = userRepository.findById(loggedUserId)</b>
+<b class="fc">&nbsp;            .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Logged user not found&quot;));</b>
+<b class="fc">&nbsp;    return loggedUser;</b>
+&nbsp;}
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-13 15:22</div>
+</div>
+</body>
+</html>

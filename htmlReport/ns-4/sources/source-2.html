@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ProcurementService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.cht.procurementManagement.services.procurement</a>
+</div>
+
+<h1>Coverage Summary for Class: ProcurementService (com.cht.procurementManagement.services.procurement)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ProcurementService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.cht.procurementManagement.services.procurement;
+&nbsp;
+&nbsp;import com.cht.procurementManagement.dto.*;
+&nbsp;import com.cht.procurementManagement.dto.procurement.ProcurementCreateDto;
+&nbsp;import com.cht.procurementManagement.dto.procurement.ProcurementResponseDto;
+&nbsp;import com.cht.procurementManagement.dto.procurement.ProcurementStatusUpdateDto;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface ProcurementService {
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    //getting users for assignedTo - to create a procurement of update
+&nbsp;    List&lt;UserDto&gt; getAssignedToUsersList();
+&nbsp;
+&nbsp;    //getting vendors list - to create a procurement or update
+&nbsp;    List&lt;VendorDto&gt; getVendorsList();
+&nbsp;
+&nbsp;    //getting procurement status objects - to update status of a procurement
+&nbsp;    List&lt;ProcurementStatusDto&gt; getProcurementStatusList();
+&nbsp;
+&nbsp;    //getting procurement stages list - to update status of a procurement
+&nbsp;    List&lt;String&gt; getProcurmentStagesList();
+&nbsp;
+&nbsp;    //getting procurement sources list - to update and create procurement
+&nbsp;    List&lt;ProcurementSourceDto&gt; getProcurementSources();
+&nbsp;
+&nbsp;//procurement CRUD:
+&nbsp;    //create a procurement
+&nbsp;    ProcurementResponseDto createProcurement(ProcurementCreateDto createDto);
+&nbsp;
+&nbsp;    //get procurement list
+&nbsp;    List&lt;ProcurementResponseDto&gt; getProcurement();
+&nbsp;
+&nbsp;    //get procurement by id
+&nbsp;    ProcurementResponseDto getProcurementById(Long id);
+&nbsp;
+&nbsp;    //update procurement
+&nbsp;    ProcurementResponseDto updateProcurement(Long id, ProcurementCreateDto createDto);
+&nbsp;
+&nbsp;    //get requests that can be chosen when updating a procurement
+&nbsp;    List&lt;RequestDto&gt; getRequestsForUpdateProcurement();
+&nbsp;
+&nbsp;    //update status of a procurement, creating a new status-update object
+&nbsp;    ProcurementStatusUpdateDto updateStatus(Long procurementId, ProcurementStatusUpdateDto updateStatusDto);
+&nbsp;
+&nbsp;    //get status-updates objects for a procurement
+&nbsp;    List&lt;ProcurementStatusUpdateDto&gt; getStatusUpdatesByProcurementId(Long procurementId);
+&nbsp;
+&nbsp;    //delete procurement by id
+&nbsp;    void deleteProcurement(Long id);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-13 15:22</div>
+</div>
+</body>
+</html>

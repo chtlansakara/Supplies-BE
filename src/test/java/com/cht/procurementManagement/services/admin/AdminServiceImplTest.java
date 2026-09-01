@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.expression.ExpressionException;
 
 import javax.swing.text.html.Option;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1341,7 +1342,12 @@ class AdminServiceImplTest {
             when(userRepository.save(any(User.class)))
                     .thenReturn(user);
             //ACT:
-            UserDto result = adminService.createUser(userDto);
+            UserDto result = null;
+            try {
+                result = adminService.createUser(userDto);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             //ASSERT:
             assertNotNull(result);
@@ -1567,7 +1573,7 @@ class AdminServiceImplTest {
 
         @Test
         @DisplayName("Update User - Successfully when user, subdiv, admindiv, designation don't exist")
-        void testUpdateUser_SuccessSameEmail(){
+        void testUpdateUser_SuccessSameEmail() throws IOException {
             //ARRANGE
             Long id = 1L;
             UserDto updatingDto = new UserDto();
@@ -1640,7 +1646,12 @@ class AdminServiceImplTest {
             when(userRepository.save(any(User.class)))
                     .thenReturn(user);
             //ACT
-            UserDto result = adminService.updateUser(id,updatingDto);
+            UserDto result = null;
+            try {
+                result = adminService.updateUser(id,updatingDto);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             //ASSERT
             assertNotNull(result);
@@ -1689,7 +1700,12 @@ class AdminServiceImplTest {
             when(userRepository.save(any(User.class)))
                     .thenReturn(user);
             //ACT
-            UserDto result = adminService.updateUser(id,updatingDto);
+            UserDto result = null;
+            try {
+                result = adminService.updateUser(id,updatingDto);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             //ASSERT
             assertNotNull(result);
@@ -1740,7 +1756,12 @@ class AdminServiceImplTest {
             when(userRepository.save(any(User.class)))
                     .thenReturn(user);
             //ACT
-            UserDto result = adminService.updateUser(id,updatingDto);
+            UserDto result = null;
+            try {
+                result = adminService.updateUser(id,updatingDto);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             //ASSERT
             assertNotNull(result);

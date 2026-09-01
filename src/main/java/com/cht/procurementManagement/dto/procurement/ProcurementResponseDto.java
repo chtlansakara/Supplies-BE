@@ -29,6 +29,8 @@ public class ProcurementResponseDto {
     private Date expectedCompletionDate;
     private Date commencedDate;
     private Date completedDate;
+    private Long poNumber;
+    private BigDecimal poValue;
 
     //representing objects
     //source
@@ -115,6 +117,23 @@ public class ProcurementResponseDto {
 
 
     //get-set methods
+
+    public Long getPoNumber() {
+        return poNumber;
+    }
+
+    public void setPoNumber(Long poNumber) {
+        this.poNumber = poNumber;
+    }
+
+    public BigDecimal getPoValue() {
+        return poValue;
+    }
+
+    public void setPoValue(BigDecimal poValue) {
+        this.poValue = poValue;
+    }
+
     public String getProcurementStage() {
         return procurementStage;
     }

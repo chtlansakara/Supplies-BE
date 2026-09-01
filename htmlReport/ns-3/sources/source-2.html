@@ -1,0 +1,138 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > AdminService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.cht.procurementManagement.services.admin</a>
+</div>
+
+<h1>Coverage Summary for Class: AdminService (com.cht.procurementManagement.services.admin)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">AdminService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.cht.procurementManagement.services.admin;
+&nbsp;
+&nbsp;import com.cht.procurementManagement.dto.*;
+&nbsp;import com.cht.procurementManagement.entities.Admindiv;
+&nbsp;import com.cht.procurementManagement.entities.Designation;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface AdminService {
+&nbsp;//Procurement Source  ----------------------------
+&nbsp;ProcurementSourceDto createSource(ProcurementSourceDto procurementSourceDto);
+&nbsp;ProcurementSourceDto updateSource(Long id,ProcurementSourceDto procurementSourceDto);
+&nbsp;List&lt;ProcurementSourceDto&gt;  getAllSources();
+&nbsp;ProcurementSourceDto getSourceById(Long id);
+&nbsp;    void deleteSourceById(Long id);
+&nbsp;//vendor ----------------------------
+&nbsp;    VendorDto createVendor(VendorDto vendorDto);
+&nbsp;    List&lt;VendorDto&gt; getVendors();
+&nbsp;    VendorDto getVendorById(Long id);
+&nbsp;    VendorDto updateVendor(Long id, VendorDto vendorDto);
+&nbsp;    void deleteVendor(Long id);
+&nbsp;
+&nbsp;
+&nbsp;// procurement-status--------------------
+&nbsp;    ProcurementStatusDto createProcurementStatus(ProcurementStatusDto procurementStatusDto);
+&nbsp;    List&lt;ProcurementStatusDto&gt; getProcurementStatus();
+&nbsp;    ProcurementStatusDto getProcurementStatusById(Long id);
+&nbsp;    ProcurementStatusDto updateProcurementStatus(Long id, ProcurementStatusDto procurementStatusDto);
+&nbsp;    void deleteProcurementStatus(Long id);
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;// user----------------------------------------
+&nbsp;    UserDto createUser(UserDto userDto);
+&nbsp;    List&lt;UserDto&gt; getUsers();
+&nbsp;    UserDto getUserById(Long id);
+&nbsp;    UserDto updateUser(Long id, UserDto userDto);
+&nbsp;    void deleteUser(Long id);
+&nbsp;
+&nbsp;// subdiv----------------------------------------
+&nbsp;    SubdivDto createSubdiv(SubdivDto subdivDto);
+&nbsp;    List&lt;SubdivDto&gt; getSubdivs();
+&nbsp;    SubdivDto getSubdivById(Long id);
+&nbsp;    List&lt;SubdivDto&gt; getSubdivsByAdmindivId(Long id);
+&nbsp;    SubdivDto updateSubdiv(Long id, SubdivDto subdivDto);
+&nbsp;    void deleteSubdiv(Long id);
+&nbsp;
+&nbsp;// admindiv----------------------------------------
+&nbsp;    AdmindivDto createAdmindiv(AdmindivDto admindivDto);
+&nbsp;    List&lt;AdmindivDto&gt; getAllAdmindivs();
+&nbsp;
+&nbsp;    AdmindivDto getAdmindivById(Long id);
+&nbsp;
+&nbsp;    AdmindivDto updateAdmindiv(Long id, AdmindivDto admindivDto);
+&nbsp;
+&nbsp;    void deleteAdmindiv(Long id);
+&nbsp;
+&nbsp;
+&nbsp;// designation ----------------------------------------
+&nbsp;
+&nbsp;    Designation createDesignation(Designation designation);
+&nbsp;
+&nbsp;    List&lt;Designation&gt; getAllDesignations();
+&nbsp;
+&nbsp;    Designation getDesignationById(Long id);
+&nbsp;
+&nbsp;    Designation updateDesignation(Long id, Designation designation);
+&nbsp;
+&nbsp;    void deleteDesignation(Long id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-13 15:22</div>
+</div>
+</body>
+</html>

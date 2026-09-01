@@ -23,7 +23,8 @@ public class DatabaseBackupService {
     @Value("${app.backup.dir}")
     private String backupDir;
 
-    @Scheduled(cron = "0 0 19 * * *")
+    //automatic backup on 7PM every friday per week
+    @Scheduled(cron = "0 0 19 * * FRI")
     public void scheduledBackup(){
         try{
             backup();

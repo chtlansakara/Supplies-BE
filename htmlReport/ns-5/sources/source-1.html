@@ -1,0 +1,368 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > RequestServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.cht.procurementManagement.services.requests</a>
+</div>
+
+<h1>Coverage Summary for Class: RequestServiceImpl (com.cht.procurementManagement.services.requests)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RequestServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.5%
+  </span>
+  <span class="absValue">
+    (62/67)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.cht.procurementManagement.services.requests;
+&nbsp;
+&nbsp;import com.cht.procurementManagement.dto.RequestDto;
+&nbsp;import com.cht.procurementManagement.entities.Admindiv;
+&nbsp;import com.cht.procurementManagement.entities.Request;
+&nbsp;import com.cht.procurementManagement.entities.Subdiv;
+&nbsp;import com.cht.procurementManagement.entities.User;
+&nbsp;import com.cht.procurementManagement.enums.AuditEntityType;
+&nbsp;import com.cht.procurementManagement.repositories.RequestRepository;
+&nbsp;import com.cht.procurementManagement.repositories.SubdivRepository;
+&nbsp;import com.cht.procurementManagement.repositories.UserRepository;
+&nbsp;import com.cht.procurementManagement.services.auth.AuthService;
+&nbsp;import com.cht.procurementManagement.services.notification.NotificationService;
+&nbsp;import jakarta.persistence.EntityNotFoundException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class RequestServiceImpl implements  RequestService{
+&nbsp;    //need User, Sub-div, Admin-div repositories
+&nbsp;    private final RequestRepository requestRepository;
+&nbsp;    private final UserRepository userRepository;
+&nbsp;    private final SubdivRepository subdivRepository;
+&nbsp;    private final AuthService authService;
+&nbsp;    private final NotificationService notificationService;
+&nbsp;
+&nbsp;    public RequestServiceImpl(RequestRepository requestRepository,
+&nbsp;                              UserRepository userRepository,
+&nbsp;                              SubdivRepository subdivRepository,
+&nbsp;                              AuthService authService,
+<b class="fc">&nbsp;                              NotificationService notificationService) {</b>
+<b class="fc">&nbsp;        this.requestRepository = requestRepository;</b>
+<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+<b class="fc">&nbsp;        this.subdivRepository = subdivRepository;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.authService = authService;</b>
+<b class="fc">&nbsp;        this.notificationService = notificationService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    //create request method with all options
+&nbsp;    @Override
+&nbsp;    public RequestDto createRequest(RequestDto requestDto) {
+&nbsp;    //set &#39;status&#39; and &#39;subdivIdList&#39; of dto before here
+&nbsp;        //only the created user &amp; created date is set here
+&nbsp;
+&nbsp;        //1. set &#39;createdBy&#39; user -
+&nbsp;        //finding the logged user id
+<b class="fc">&nbsp;        Long loggedUserId = authService.getLoggedUserDto().getId();</b>
+&nbsp;
+&nbsp;        //finding User object from db
+<b class="fc">&nbsp;        User userCreatedBy  = userRepository.findById(loggedUserId)</b>
+<b class="fc">&nbsp;                .orElseThrow( () -&gt; new EntityNotFoundException(&quot;User not found!&quot;));</b>
+&nbsp;
+&nbsp;        //2. find sub-div objects from db
+&nbsp;        //finding the sub div objects list from db
+<b class="fc">&nbsp;        List&lt;Subdiv&gt; subdivList = subdivRepository.findAllById(requestDto.getSubdivIdList());</b>
+&nbsp;
+&nbsp;        //throw error if sub-div list is empty
+<b class="fc">&nbsp;        if(subdivList.isEmpty()){</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Sub divisions for request are empty&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //3. get the admin-div of request &amp; set automatically
+<b class="fc">&nbsp;        Admindiv requestAdmindiv = subdivList.stream()</b>
+<b class="fc">&nbsp;                .map(Subdiv::getAdmindiv)</b>
+<b class="fc">&nbsp;                .filter(Objects::nonNull) //filter out the null</b>
+<b class="fc">&nbsp;                .findFirst()</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt;  new EntityNotFoundException(&quot;Admin division of request can not be found&quot;));</b>
+&nbsp;
+&nbsp;        //4. create new request
+<b class="fc">&nbsp;        Request request = new Request();</b>
+&nbsp;
+<b class="fc">&nbsp;        request.setTitle(requestDto.getTitle());</b>
+<b class="fc">&nbsp;        request.setQuantity(requestDto.getQuantity());</b>
+<b class="fc">&nbsp;        request.setDescription(requestDto.getDescription());</b>
+<b class="fc">&nbsp;        request.setFund(requestDto.getFund());</b>
+<b class="fc">&nbsp;        request.setEstimation(requestDto.getEstimation());</b>
+&nbsp;
+&nbsp;        //should already have the status in dto
+<b class="fc">&nbsp;        request.setStatus(requestDto.getStatus());</b>
+&nbsp;
+<b class="fc">&nbsp;        request.setPreviouslyPurchased(requestDto.isPreviouslyPurchased());</b>
+<b class="fc">&nbsp;        request.setPreviousPurchaseYear(requestDto.getPreviousPurchaseYear());</b>
+<b class="fc">&nbsp;        request.setReasonForRequirement(requestDto.getReasonForRequirement());</b>
+<b class="fc">&nbsp;        request.setApprovedDate(requestDto.getApprovedDate());</b>
+<b class="fc">&nbsp;        request.setAuthorizedBy(requestDto.getAuthorizedBy());</b>
+&nbsp;
+&nbsp;        //add current date as created date
+<b class="fc">&nbsp;        request.setCreatedDate(new Date());</b>
+&nbsp;
+&nbsp;        //setting objects - User &amp; Sub-div Objects list
+<b class="fc">&nbsp;        request.setCreatedBy(userCreatedBy);</b>
+<b class="fc">&nbsp;        request.setSubdivList(subdivList);</b>
+<b class="fc">&nbsp;        request.setAdmindiv(requestAdmindiv);</b>
+&nbsp;
+&nbsp;        //save to db &amp; return as dto
+<b class="fc">&nbsp;        Request savedRequest = requestRepository.save(request);</b>
+&nbsp;
+&nbsp;        //send notifications service the saved request object
+<b class="fc">&nbsp;        notificationService.onRequestSubmitted(savedRequest);</b>
+&nbsp;
+&nbsp;        //return as dto
+<b class="fc">&nbsp;        return savedRequest.getRequestDto();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    @Transactional
+&nbsp;//    @Override
+&nbsp;//    public RequestDto updateRequest(Long id, RequestDto requestDto) {
+&nbsp;//      //check for correct sub div list &amp; status in dto before here
+&nbsp;//
+&nbsp;//       //check for request
+&nbsp;//        Optional&lt;Request&gt; optionalRequest = requestRepository.findById(id);
+&nbsp;//
+&nbsp;//        //finding the logged user id
+&nbsp;//        Long loggedUserId = authService.getLoggedUserDto().getId();
+&nbsp;//
+&nbsp;//        //finding User object from db
+&nbsp;//        User userUpdatedBy  = userRepository.findById(loggedUserId)
+&nbsp;//                .orElseThrow( () -&gt; new RuntimeException(&quot;User not found!&quot;));
+&nbsp;//
+&nbsp;//        //check if sub div is empty
+&nbsp;//        if(requestDto.getSubdivIdList() == null || requestDto.getSubdivIdList().contains(null)){
+&nbsp;//            throw new RuntimeException(&quot;Sub divisions list must not be empty or contain null values&quot;);
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        //finding the sub div objects list from db
+&nbsp;//            List&lt;Subdiv&gt; subdivList = subdivRepository.findAllById(requestDto.getSubdivIdList());
+&nbsp;//
+&nbsp;//        //get the admindiv of request
+&nbsp;//        Admindiv requestAdmindiv = subdivList.stream().map(Subdiv::getAdmindiv).findFirst()
+&nbsp;//                .orElseThrow(() -&gt;  new RuntimeException(&quot;Admin division of request can not be found&quot;));
+&nbsp;//
+&nbsp;//        if(optionalRequest.isPresent()){
+&nbsp;//            //get Request object to update
+&nbsp;//            Request existingRequest = optionalRequest.get();
+&nbsp;//
+&nbsp;//            //update with data
+&nbsp;//            existingRequest.setTitle(requestDto.getTitle());
+&nbsp;//            existingRequest.setQuantity(requestDto.getQuantity());
+&nbsp;//            existingRequest.setDescription(requestDto.getDescription());
+&nbsp;//            existingRequest.setFund(requestDto.getFund());
+&nbsp;//            existingRequest.setEstimation(requestDto.getEstimation());
+&nbsp;//
+&nbsp;//
+&nbsp;//            existingRequest.setStatus(requestDto.getStatus());
+&nbsp;//
+&nbsp;//            existingRequest.setPreviouslyPurchased(requestDto.isPreviouslyPurchased());
+&nbsp;//            existingRequest.setPreviousPurchaseYear(requestDto.getPreviousPurchaseYear());
+&nbsp;//            existingRequest.setReasonForRequirement(requestDto.getReasonForRequirement());
+&nbsp;//            existingRequest.setApprovedDate(requestDto.getApprovedDate());
+&nbsp;//            existingRequest.setAuthorizedBy(requestDto.getAuthorizedBy());
+&nbsp;//
+&nbsp;//            //add current date as created date
+&nbsp;//            existingRequest.setCreatedDate(new Date());
+&nbsp;//
+&nbsp;//            //setting objects User &amp; Sub-div Object list
+&nbsp;//            existingRequest.setCreatedBy(userUpdatedBy);
+&nbsp;//            //set only if the new list is not empty - if empty doesn&#39;t change
+&nbsp;//
+&nbsp;//            existingRequest.setSubdivList(subdivList);
+&nbsp;//            existingRequest.setAdmindiv(requestAdmindiv);
+&nbsp;//
+&nbsp;//
+&nbsp;//            //save and return as dto
+&nbsp;//            return requestRepository.save(existingRequest).getRequestDto();
+&nbsp;//        }
+&nbsp;//        return null;
+&nbsp;//    }
+&nbsp;
+&nbsp;    //USED ONE
+&nbsp;    @Override
+&nbsp;    @Transactional
+&nbsp;    public RequestDto updateRequest(Request request, RequestDto requestDto) {
+&nbsp;
+&nbsp;        //4. get logged User object
+<b class="fc">&nbsp;        Long loggedUserId = authService.getLoggedUserDto().getId();</b>
+&nbsp;
+<b class="fc">&nbsp;        User updatedBy = userRepository.findById(loggedUserId)</b>
+<b class="fc">&nbsp;                .orElseThrow(()-&gt; new EntityNotFoundException(&quot;User not found&quot;));</b>
+&nbsp;
+&nbsp;        //5. find sub-divs
+<b class="fc">&nbsp;        List&lt;Subdiv&gt; subdivList = subdivRepository.findAllById(requestDto.getSubdivIdList());</b>
+&nbsp;
+&nbsp;        //check for sub-div list
+<b class="fc">&nbsp;        if(subdivList.size() != requestDto.getSubdivIdList().size()){</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Invalid sub-divisions!&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;        //Update fields of request with dto
+<b class="fc">&nbsp;        request.setTitle(requestDto.getTitle());</b>
+<b class="fc">&nbsp;        request.setQuantity(requestDto.getQuantity());</b>
+<b class="fc">&nbsp;        request.setDescription(requestDto.getDescription());</b>
+<b class="fc">&nbsp;        request.setFund(requestDto.getFund());</b>
+<b class="fc">&nbsp;        request.setEstimation(requestDto.getEstimation());</b>
+&nbsp;
+<b class="fc">&nbsp;        request.setPreviouslyPurchased(requestDto.isPreviouslyPurchased());</b>
+<b class="fc">&nbsp;        request.setPreviousPurchaseYear(requestDto.getPreviousPurchaseYear());</b>
+<b class="fc">&nbsp;        request.setReasonForRequirement(requestDto.getReasonForRequirement());</b>
+<b class="fc">&nbsp;        request.setApprovedDate(requestDto.getApprovedDate());</b>
+<b class="fc">&nbsp;        request.setAuthorizedBy(requestDto.getAuthorizedBy());</b>
+&nbsp;
+<b class="fc">&nbsp;        request.setStatus(requestDto.getStatus());</b>
+&nbsp;
+&nbsp;        //add current date as created date
+<b class="fc">&nbsp;        request.setLastUpdatedDate(new Date());</b>
+&nbsp;        //setting objects User &amp; Sub-div Object list
+<b class="fc">&nbsp;        request.setLastUpdatedBy(updatedBy);</b>
+&nbsp;
+<b class="fc">&nbsp;        request.setSubdivList(subdivList);</b>
+&nbsp;
+<b class="fc">&nbsp;        return requestRepository.save(request).getRequestDto();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //get Requests by id
+&nbsp;    @Transactional
+&nbsp;    @Override
+&nbsp;    public RequestDto getRequestById(Long requestId) {
+<b class="fc">&nbsp;        return requestRepository.findById(requestId)</b>
+<b class="fc">&nbsp;                .map(Request::getRequestDto)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new EntityNotFoundException(&quot;Request not found&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //get all requests - sorted - FYI
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    @Override
+&nbsp;    public List&lt;RequestDto&gt; getAllRequests() {
+<b class="nc">&nbsp;        return requestRepository.findAll()</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .sorted(Comparator.comparing(Request::getCreatedDate).reversed())</b>
+<b class="nc">&nbsp;                .map(Request::getRequestDto)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;//    @Transactional
+&nbsp;//    @Override
+&nbsp;//    public void deleteRequest(Long requestId) {
+&nbsp;//        Optional&lt;Request&gt; optionalRequest = requestRepository.findById(requestId);
+&nbsp;//
+&nbsp;//        if(!optionalRequest.isPresent()){
+&nbsp;//            throw new RuntimeException(&quot;Request is not found&quot;);
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        //delete related notifications
+&nbsp;//        notificationService.deleteNotifications(AuditEntityType.REQUEST, requestId);
+&nbsp;//        requestRepository.deleteById(requestId);
+&nbsp;//
+&nbsp;//    }
+&nbsp;
+&nbsp;    //USED ONE
+&nbsp;    @Transactional
+&nbsp;    @Override
+&nbsp;    public void deleteRequest(Request request) {
+&nbsp;        //delete related notifications
+<b class="fc">&nbsp;        notificationService.deleteNotifications(AuditEntityType.REQUEST, request.getId());</b>
+&nbsp;//        requestRepository.deleteById(request.getId());
+<b class="fc">&nbsp;        requestRepository.delete(request);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-13 15:22</div>
+</div>
+</body>
+</html>

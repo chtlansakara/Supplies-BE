@@ -25,6 +25,8 @@ public class ProcurementCreateDto {
     private String vendorDetails;
     private Date scheduledCommenceDate;
     private Date expectedCompletionDate;
+    private Long poNumber;
+    private BigDecimal poValue;
 
     //representing objects
     private Long requestId;
@@ -37,6 +39,22 @@ public class ProcurementCreateDto {
 
     //get-set methods
 
+
+    public Long getPoNumber() {
+        return poNumber;
+    }
+
+    public void setPoNumber(Long poNumber) {
+        this.poNumber = poNumber;
+    }
+
+    public BigDecimal getPoValue() {
+        return poValue;
+    }
+
+    public void setPoValue(BigDecimal poValue) {
+        this.poValue = poValue;
+    }
 
     public Long getSourceId() {
         return sourceId;

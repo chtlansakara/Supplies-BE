@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrity(DataIntegrityViolationException e){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Operation could not be completed due to a data integrity violation!");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Unable to complete the operation due to relationships with request or/and procurement records!");
     }
 
     //400

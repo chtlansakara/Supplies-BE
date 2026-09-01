@@ -39,6 +39,8 @@ public class ProcurementMapper {
         responseDto.setLastUpdatedOn(procurement.getLastUpdatedOn());
         responseDto.setCommencedDate(procurement.getCommencedDate());
         responseDto.setCompletedDate(procurement.getCompletedDate());
+        responseDto.setPoNumber(procurement.getPoNumber());
+        responseDto.setPoValue(procurement.getPoValue());
         //setting stage
         responseDto.setProcurementStage(procurement.getProcurementStage().toString());
         //for objects
@@ -165,6 +167,8 @@ public class ProcurementMapper {
         procurement.setVendorDetails(dto.getVendorDetails());
         procurement.setScheduledCommenceDate(dto.getScheduledCommenceDate());
         procurement.setExpectedCompletionDate(dto.getExpectedCompletionDate());
+        procurement.setPoNumber(dto.getPoNumber());
+        procurement.setPoValue(dto.getPoValue());
 
 
         return procurement;
@@ -193,6 +197,8 @@ public class ProcurementMapper {
         procurement.setVendorDetails(dto.getVendorDetails());
         procurement.setScheduledCommenceDate(dto.getScheduledCommenceDate());
         procurement.setExpectedCompletionDate(dto.getExpectedCompletionDate());
+        procurement.setPoNumber(dto.getPoNumber());
+        procurement.setPoValue(dto.getPoValue());
 
         return procurement;
     }

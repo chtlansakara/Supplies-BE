@@ -1,0 +1,197 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ApprovalServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.cht.procurementManagement.services.Approval</a>
+</div>
+
+<h1>Coverage Summary for Class: ApprovalServiceImpl (com.cht.procurementManagement.services.Approval)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ApprovalServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (32/32)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.cht.procurementManagement.services.Approval;
+&nbsp;
+&nbsp;import com.cht.procurementManagement.dto.ApprovalDto;
+&nbsp;import com.cht.procurementManagement.entities.Approval;
+&nbsp;import com.cht.procurementManagement.entities.Request;
+&nbsp;import com.cht.procurementManagement.entities.User;
+&nbsp;import com.cht.procurementManagement.repositories.ApprovalRepository;
+&nbsp;import com.cht.procurementManagement.repositories.RequestRepository;
+&nbsp;import com.cht.procurementManagement.repositories.UserRepository;
+&nbsp;import com.cht.procurementManagement.services.auth.AuthService;
+&nbsp;import com.cht.procurementManagement.services.notification.NotificationService;
+&nbsp;import jakarta.persistence.EntityNotFoundException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.Comparator;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class ApprovalServiceImpl implements  ApprovalService{
+&nbsp;    private final AuthService authService;
+&nbsp;    private final ApprovalRepository approvalRepository;
+&nbsp;    private final RequestRepository requestRepository;
+&nbsp;    private final UserRepository userRepository;
+&nbsp;    private final NotificationService notificationService;
+&nbsp;    public ApprovalServiceImpl(AuthService authService,
+&nbsp;                               ApprovalRepository approvalRepository,
+&nbsp;                               RequestRepository requestRepository,
+<b class="fc">&nbsp;                               UserRepository userRepository, NotificationService notificationService) {</b>
+<b class="fc">&nbsp;        this.authService = authService;</b>
+<b class="fc">&nbsp;        this.approvalRepository = approvalRepository;</b>
+<b class="fc">&nbsp;        this.requestRepository = requestRepository;</b>
+<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+<b class="fc">&nbsp;        this.notificationService = notificationService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ApprovalDto createApproval(ApprovalDto approvalDto) {
+&nbsp;        //setting only createdBy user &amp; created Date here
+&nbsp;        //set type &amp; request before sending here
+&nbsp;
+&nbsp;        //get user id from logged user details
+<b class="fc">&nbsp;        Long loggedUserId = authService.getLoggedUserDto().getId();</b>
+&nbsp;        //finding the User object from db
+<b class="fc">&nbsp;        User userCreatedBy = userRepository.findById(loggedUserId)</b>
+<b class="fc">&nbsp;                .orElseThrow(()-&gt; new EntityNotFoundException(&quot;User not found!&quot;));</b>
+&nbsp;
+&nbsp;        //finding the relevant request in db from request id
+<b class="fc">&nbsp;        Optional&lt;Request&gt; optionalRequest = requestRepository.findById(approvalDto.getRequestId());</b>
+<b class="fc">&nbsp;        if(optionalRequest.isPresent()){</b>
+&nbsp;            //create approval object &amp; set details from dto
+<b class="fc">&nbsp;            Approval approval = new Approval();</b>
+<b class="fc">&nbsp;            approval.setAllocatedAmount(approvalDto.getAllocatedAmount());</b>
+<b class="fc">&nbsp;            approval.setAmountInWords(approvalDto.getAmountInWords());</b>
+<b class="fc">&nbsp;            approval.setPlanNo(approvalDto.getPlanNo());</b>
+<b class="fc">&nbsp;            approval.setComment(approvalDto.getComment());</b>
+<b class="fc">&nbsp;            approval.setFund(approvalDto.getFund());</b>
+<b class="fc">&nbsp;            approval.setAuthroizedBy(approvalDto.getAuthorizedBy());</b>
+<b class="fc">&nbsp;            approval.setApprovedDate(approvalDto.getApprovedDate());</b>
+&nbsp;            //set current date
+<b class="fc">&nbsp;            approval.setCreatedDate(new Date());</b>
+<b class="fc">&nbsp;            approval.setType(approvalDto.getType());</b>
+&nbsp;            //user
+<b class="fc">&nbsp;            approval.setCreatedBy(userCreatedBy);</b>
+&nbsp;            //request
+<b class="fc">&nbsp;            approval.setRequest(optionalRequest.get());</b>
+&nbsp;
+<b class="fc">&nbsp;            Approval savedApproval =  approvalRepository.save(approval);</b>
+&nbsp;
+&nbsp;            //create notification &amp; send
+<b class="fc">&nbsp;            notificationService.onRequestApproval(optionalRequest.get(), savedApproval.getType());</b>
+&nbsp;
+&nbsp;            // return as dto
+<b class="fc">&nbsp;            return savedApproval.getApprovalDto();</b>
+&nbsp;
+&nbsp;        }else{
+<b class="fc">&nbsp;            throw new EntityNotFoundException(&quot;Request not found!&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;ApprovalDto&gt; getApprovalsByRequestId(Long requestId) {
+<b class="fc">&nbsp;       return approvalRepository.findAllByRequestId(requestId)</b>
+<b class="fc">&nbsp;               .stream()</b>
+<b class="fc">&nbsp;               .sorted(Comparator.comparing(Approval::getId))</b>
+<b class="fc">&nbsp;               .map(Approval::getApprovalDto)</b>
+<b class="fc">&nbsp;               .collect(Collectors.toList());</b>
+&nbsp;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-13 15:22</div>
+</div>
+</body>
+</html>

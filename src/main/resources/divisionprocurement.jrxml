@@ -188,7 +188,7 @@
                     <expression><![CDATA[$F{quantity}]]></expression>
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2217e07c-1628-4e42-87c1-1a86dc11d25f"/>
                 </element>
-                <element kind="textField" uuid="a1b0ad74-1cc5-45af-ba83-c43d299dd034" x="597" y="0" width="122" height="15" textAdjust="StretchHeight" hTextAlign="Right" style="Detail">
+                <element kind="textField" uuid="a1b0ad74-1cc5-45af-ba83-c43d299dd034" x="597" y="0" width="122" height="15" blankWhenNull="true" textAdjust="StretchHeight" hTextAlign="Right" style="Detail">
                     <expression><![CDATA[$F{commencedDate}]]></expression>
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ea6855b0-434f-4f4d-8efb-0185c048a9fc"/>
                 </element>

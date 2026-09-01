@@ -40,6 +40,7 @@ public class JwtUtil {
         return generateToken(new HashMap<>(), userDetails);
     }
     //private method
+    //expires the token after 10 days
     private String generateToken(Map<String,Object> extraClaims, UserDetails userDetails){
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))

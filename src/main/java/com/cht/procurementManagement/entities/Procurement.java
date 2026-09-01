@@ -27,6 +27,10 @@ public class Procurement {
     private Date scheduledCommenceDate;
     private Date expectedCompletionDate;
 
+    //added when updating
+    private Long poNumber;
+    private BigDecimal poValue;
+
 // must be entered by backend
 
     //through status update
@@ -87,6 +91,22 @@ public class Procurement {
 
 //get-set methods
 
+
+    public Long getPoNumber() {
+        return poNumber;
+    }
+
+    public void setPoNumber(Long poNumber) {
+        this.poNumber = poNumber;
+    }
+
+    public BigDecimal getPoValue() {
+        return poValue;
+    }
+
+    public void setPoValue(BigDecimal poValue) {
+        this.poValue = poValue;
+    }
 
     public List<ProcurementStatusUpdate> getStatusUpdates() {
         return statusUpdates;
